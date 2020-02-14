@@ -1,0 +1,4 @@
+R_CLIENT_ID=client_id
+R_CLIENT_SECRET=client_secret
+WEBHOOK=webhook_link
+SUBREDDIT=subreddit_name
