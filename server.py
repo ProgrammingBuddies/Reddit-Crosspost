@@ -13,6 +13,8 @@ class ProgrammingBuddiesBot:
         self.subreddit = getenv('SUBREDDIT')
         self.webhook_url = getenv("WEBHOOK")
         self.buffer = []
+        self.post_limit = int(getenv("POST_LIMIT", 10))
+        self.buffer_size = int(getenv("BUFFER_SIZE", 100))
 
     def loop(self):
         '''Request the newest Posts from a subreddit and post them to a
@@ -22,7 +24,7 @@ class ProgrammingBuddiesBot:
 
         sub = self.reddit.subreddit(self.subreddit)
         for i, id in enumerate(self.buffer[::-1]):
-            posts = list(sub.new(limit=10, params={"before": id}))[::-1]
+            posts = list(sub.new(limit=self.post_limit, params={"before": id}))[::-1]
             if len(posts) > 0:
                 self.buffer = self.buffer[:-1*i]
                 break
@@ -38,8 +40,8 @@ class ProgrammingBuddiesBot:
             print(f't3_{post.id}: {post.url}')
     
     def clean(self):
-        if len(self.buffer) > 100:
-            self.buffer = self.buffer[len(self.buffer) - 100:]
+        if len(self.buffer) > self.buffer_size:
+            self.buffer = self.buffer[len(self.buffer) - self.buffer_size:]
 
     def hook(self, msg):
         webhook = DiscordWebhook(url=self.webhook_url, content=msg)
@@ -48,12 +50,13 @@ class ProgrammingBuddiesBot:
 
 if __name__ == "__main__":
     bot = ProgrammingBuddiesBot()
+    waiting_time = int(getenv("WAITING_TIME", 15))
     print("running")
     while True:
         try:
             print("requesting")
             bot.loop()
-            time.sleep(15*60)
+            time.sleep(waiting_time * 60)
         except KeyboardInterrupt:
             exit()
         except Exception as e:
