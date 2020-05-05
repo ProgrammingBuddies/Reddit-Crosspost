@@ -24,19 +24,27 @@ class ProgrammingBuddiesBot:
 
         sub = self.reddit.subreddit(self.subreddit)
         for i, id in enumerate(self.buffer[::-1]):
-            posts = list(sub.new(limit=self.post_limit, params={"before": id}))[::-1]
-            if len(posts) > 0:
-                self.buffer = self.buffer[:-1*i]
-                break
+            try:
+                time.sleep(1)
+                post = praw.models.Submission(self.reddit, id)
+                if post is None:
+                    self.buffer = self.buffer[:-1*i]
+                    print("post was None")
+                else:
+                    print(f"get items before t3_{id}")
+                    posts = list(sub.new(limit=self.post_limit, params={"before": f't3_{id}'}))[::-1]
+                    break
+            except Exception as e:
+                print(e)
         else:
             print("initial loop or unusable buffer yo")
-            posts = sub.new(limit=10)
-            self.buffer += [f't3_{post.id}' for post in list(posts)[::-1]]
+            posts = sub.new(limit=self.post_limit)
+            self.buffer += [post.id for post in list(posts)[::-1]]
             return
 
         for post in posts:
             self.hook(post.url)
-            self.buffer.append(f't3_{post.id}')
+            self.buffer.append(f'{post.id}')
             print(f't3_{post.id}: {post.url}')
     
     def clean(self):
