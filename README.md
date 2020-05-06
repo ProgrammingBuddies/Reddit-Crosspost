@@ -21,4 +21,6 @@ For the following steps make sure the python version used is 3.7. Otherwise Pipe
 
 Now you can run the bot with `python server.py`
 
-In it's current iteration it will query the specified subreddit every 15 minutes and post all new submissions to the specified webhook.
+## Optional Configuration
+- `FETCH_SIZE` controls how many posts are fetched per loop. 10 by default.
+- `WAITING_TIME` How many minutes the program sleeps in between loops.
