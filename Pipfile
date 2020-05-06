@@ -10,6 +10,7 @@ pylint = "*"
 praw = "*"
 discord-py = "*"
 discord-webhook = "*"
+base36 = "*"
 
 [requires]
 python_version = "3.7"
