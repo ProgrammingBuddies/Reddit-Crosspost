@@ -3,7 +3,9 @@ from os import getenv
 from discord_webhook import DiscordWebhook
 import time
 import base36
-
+import traceback
+import sys
+from prawcore.exceptions import ServerError
 
 class ProgrammingBuddiesBot:
 
@@ -52,5 +54,6 @@ if __name__ == "__main__":
             time.sleep(waiting_time * 60)
         except KeyboardInterrupt:
             exit()
-        #except Exception as e:
-        #    print(f'EXCEPTION\n{e}')
+        except ServerError as err:
+            print(err, file=sys.stderr)
+            print(traceback.format_exc(), file=sys.stderr)
